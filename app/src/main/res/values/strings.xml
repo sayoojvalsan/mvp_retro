@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">RetroAlbum</string>
+    <string name="search_title">albums</string>
+    <string name="search_hint">album name</string>
+
+    <string name="error_generic">Something went wrong. Please try again later</string>
+    <string name="error_cannot_reach_server">Could not reach the server. Please try again later</string>
+
+    <string name="default_message">Search for your favorite album</string>
+
+
+</resources>
