@@ -33,6 +33,7 @@ public class AlbumPresenter implements AlbumPresenterInterface, Callback<AlbumRe
     public void fetchAlbum(final String albumName) {
         final AlbumViewInterface albumViewInterface = mAlbumViewInterface.get();
         if(albumViewInterface != null) {
+            albumViewInterface.clear();
             albumViewInterface.showProgress();
             mFetchAlbumService.fetchAlbum(albumName, this);
         }
@@ -55,7 +56,6 @@ public class AlbumPresenter implements AlbumPresenterInterface, Callback<AlbumRe
 
     @Override
     public void onFailure(Throwable t) {
-
         final AlbumViewInterface albumViewInterface = mAlbumViewInterface.get();
         if(albumViewInterface != null) {
             albumViewInterface.hideProgress();

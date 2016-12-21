@@ -21,4 +21,5 @@ public interface AlbumViewInterface {
 
      void showMessage();
 
+     void clear();
 }

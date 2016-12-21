@@ -6,6 +6,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -106,6 +107,7 @@ public class AlbumView extends FrameLayout implements AlbumViewInterface{
 
     @Override
     public void onFailure(Throwable t) {
+        Log.d(TAG, t.getMessage());
         setMessage(ErrorUtil.getErrorMessage(getContext(), t));
         showMessage();
     }
@@ -118,6 +120,12 @@ public class AlbumView extends FrameLayout implements AlbumViewInterface{
     @Override
     public void showMessage() {
         mSearchText.setVisibility(View.VISIBLE);
+
+    }
+
+    @Override
+    public void clear(){
+        mMyRecyclerViewAdapter.clear();
 
     }
 }

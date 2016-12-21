@@ -47,13 +47,18 @@ public class AlbumViewAdapter extends RecyclerView.Adapter<AlbumViewAdapter.Cust
 
     @Override
     public int getItemCount() {
-        if(mAlbums.getItems() == null) return 0;
+        if(mAlbums == null || mAlbums.getItems() == null) return 0;
 
         return mAlbums.getItems().length;
     }
 
     public void loadAlbums(Albums album) {
         mAlbums = album;
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        if(mAlbums != null) mAlbums = null;
         notifyDataSetChanged();
     }
 
