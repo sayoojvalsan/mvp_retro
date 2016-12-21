@@ -3,7 +3,6 @@ package services;
 
 import interfaces.FetchAlbumServiceInterface;
 import model.AlbumResponse;
-import nomind.retroalbum.MyApplication;
 import retrofit.Call;
 import retrofit.Callback;
 
@@ -20,7 +19,7 @@ public class FetchAlbumService implements FetchAlbumServiceInterface {
     public void fetchAlbum(final String albumName, Callback<AlbumResponse> callback) {
 
 
-        final Call<AlbumResponse> albumsCall = MyApplication.getInstance().getSpotifyApiInterface().fetchAlbum(albumName);
+        final Call<AlbumResponse> albumsCall = RetroFitManager.getInstance().getSpotifyApiInterface().fetchAlbum(albumName);
 
         albumsCall.enqueue(callback);
 
