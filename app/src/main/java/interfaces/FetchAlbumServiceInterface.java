@@ -1,7 +1,6 @@
 package interfaces;
 
 import model.AlbumResponse;
-import retrofit.Callback;
 
 /**
  * Created by sayoojvalsan on 12/19/16.

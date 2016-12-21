@@ -6,10 +6,9 @@ import java.lang.ref.WeakReference;
 
 import interfaces.AlbumPresenterInterface;
 import interfaces.AlbumViewInterface;
+import interfaces.Callback;
 import model.AlbumResponse;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+
 import services.FetchAlbumService;
 
 /**
@@ -42,23 +41,21 @@ public class AlbumPresenter implements AlbumPresenterInterface, Callback<AlbumRe
 
 
     @Override
-    public void onResponse(Response<AlbumResponse> response, Retrofit retrofit) {
+    public void onResponse(AlbumResponse response) {
+
         final AlbumViewInterface albumViewInterface = mAlbumViewInterface.get();
         if(albumViewInterface != null) {
-            if(response != null && response.body() != null) {
                 albumViewInterface.hideProgress();
-                albumViewInterface.onAlbumLoaded(response.body().getAlbums());
-            }
+            if(response != null) albumViewInterface.onAlbumLoaded(response.getAlbums());
             else onFailure(new NullPointerException());
 
         }
+
     }
 
     @Override
     public void onFailure(Throwable t) {
-        if(t != null){
-            Log.e(TAG, "onFailure " + t.getLocalizedMessage());
-        }
+
         final AlbumViewInterface albumViewInterface = mAlbumViewInterface.get();
         if(albumViewInterface != null) {
             albumViewInterface.hideProgress();

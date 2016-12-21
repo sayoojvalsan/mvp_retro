@@ -1,7 +1,5 @@
 package presenter;
 
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.ResponseBody;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,20 +8,18 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
+import java.net.UnknownHostException;
+
 import interfaces.AlbumViewInterface;
 import model.AlbumResponse;
 import model.Albums;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import services.FetchAlbumService;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 
 /**
@@ -37,19 +33,19 @@ public class AlbumPresenterTest {
     @Mock
     FetchAlbumService fetchAlbumService;
 
+    @Mock
+    Callback<AlbumResponse> mCallBack;
     @Test
     public void fetchAlbum() throws Exception {
         AlbumPresenter presenter = new AlbumPresenter(albumViewInterface, fetchAlbumService);
+        //Test Success scenario
 
-
-        //Test success scenario
-        final retrofit.Response<AlbumResponse> response = Response.success(new AlbumResponse());
 
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
 
-                ((AlbumPresenter)invocation.getArguments()[1]).onResponse(response, null);
+                ((AlbumPresenter)invocation.getArguments()[1]).onResponse(new AlbumResponse());
                 return null;
             }
         }).when(fetchAlbumService).fetchAlbum("Cold", presenter);
@@ -65,21 +61,11 @@ public class AlbumPresenterTest {
 
         //Test Failure scenario
 
-
-        final retrofit.Response<AlbumResponse> responseError = Response.error(
-                403,
-                ResponseBody.create(
-                        MediaType.parse("application/json"),
-                        "{\"key\":[\"somestuff\"]}"
-                )
-        );
-
-
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
 
-                ((AlbumPresenter)invocation.getArguments()[1]).onResponse(responseError, null);
+                ((AlbumPresenter)invocation.getArguments()[1]).onFailure(new UnknownHostException());
                 return null;
             }
         }).when(fetchAlbumService).fetchAlbum("NoCold", presenter);
