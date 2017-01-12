@@ -9,8 +9,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.widget.SearchView;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import interfaces.SpotifyApiInterface;
 import presenter.AlbumPresenter;
 import services.FetchAlbumService;
 import view.AlbumView;
@@ -21,18 +24,26 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.album_view)
     AlbumView mAlbumView;
-    private AlbumPresenter mAlbumPresenter;
     private String mQuery;
+
+    @Inject
+    SpotifyApiInterface mSpotifyApiInterface;
+
+    @Inject
+    FetchAlbumService mFetchAlbumService;
+
+
+    AlbumPresenter mAlbumPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        ((MyApplication) getApplication()).getNetComponent().inject(this);
 
 
-        final FetchAlbumService fetchAlbumService = new FetchAlbumService();
-        mAlbumPresenter = new AlbumPresenter(mAlbumView, fetchAlbumService);
+        mAlbumPresenter = new AlbumPresenter(mAlbumView, mFetchAlbumService);
 
         //restore query on orientation change
         if(savedInstanceState != null && savedInstanceState.containsKey(QUERY)){

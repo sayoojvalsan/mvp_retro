@@ -1,4 +1,6 @@
-package services;
+package di;
+
+import android.app.Application;
 
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.Interceptor;
@@ -8,6 +10,11 @@ import com.squareup.okhttp.Response;
 import java.io.File;
 import java.io.IOException;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
 import interfaces.SpotifyApiInterface;
 import nomind.retroalbum.MyApplication;
 import retrofit.GsonConverterFactory;
@@ -15,58 +22,60 @@ import retrofit.Retrofit;
 import util.Utils;
 
 /**
- * Created by sayoojvalsan on 12/20/16.
+ * Created by sayoojvalsan on 1/11/17.
  */
-public class RetroFitManager {
 
-    private static final String API_SPOTIFY_COM = "https://api.spotify.com";
-    private Retrofit mRetroFit;
-    private SpotifyApiInterface mSpotifyApiInterface;
+@Module
+public class NetModule {
 
-    private static RetroFitManager ourInstance = new RetroFitManager();
+    String mBaseUrl;
 
-    public static RetroFitManager getInstance() {
-        return ourInstance;
+    public NetModule(String baseUrl) {
+        mBaseUrl = baseUrl;
     }
 
-    private RetroFitManager() {
+
+
+
+
+    @Provides
+    @Singleton
+    Cache provideOkHttpCache(Application application) {
+        int cacheSize = 10 * 1024 * 1024; // 10 MiB
+        File httpCacheDirectory = new File(MyApplication.getInstance().getCacheDir(), "responses");
+        Cache cache = new Cache(httpCacheDirectory, cacheSize);
+        return cache;
     }
 
-    public void initRetroFit() {
 
+    @Provides
+    @Singleton
+    OkHttpClient provideOkHttpClient(Cache cache) {
         OkHttpClient client = new OkHttpClient();
         client.networkInterceptors().add(REWRITE_CACHE_CONTROL_INTERCEPTOR);
-        File httpCacheDirectory = new File(MyApplication.getInstance().getCacheDir(), "responses");
-        int cacheSize = 10 * 1024 * 1024; // 10 MiB
-        Cache cache = new Cache(httpCacheDirectory, cacheSize);
-
-        //add cache to the client
         client.setCache(cache);
+        return client;
+    }
 
+    @Provides
+    @Singleton
+    Retrofit provieRetroFit(OkHttpClient client){
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(API_SPOTIFY_COM)
+        return new Retrofit.Builder()
+                .baseUrl(mBaseUrl)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        mRetroFit = retrofit;
-
     }
 
-    public Retrofit getRetroFit() {
-        if(mRetroFit == null){
-            initRetroFit();
-        }
-        return mRetroFit;
+    @Provides
+    @Singleton
+    SpotifyApiInterface provieSpotifyInterface(Retrofit retrofit){
+
+        return retrofit.create(SpotifyApiInterface.class);
     }
 
-    public SpotifyApiInterface getSpotifyApiInterface() {
-        if(mSpotifyApiInterface == null){
-            mSpotifyApiInterface = getRetroFit().create(SpotifyApiInterface.class);
-        }
-        return mSpotifyApiInterface;
-    }
 
     private static final Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
         @Override
@@ -86,6 +95,4 @@ public class RetroFitManager {
         }
 
     };
-
-
 }
